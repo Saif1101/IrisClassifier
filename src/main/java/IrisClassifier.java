@@ -10,6 +10,7 @@ import org.deeplearning4j.nn.conf.layers.DenseLayer;
 import org.deeplearning4j.nn.conf.layers.OutputLayer;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.weights.WeightInit;
+import org.deeplearning4j.util.ModelSerializer;
 import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.DataSet;
@@ -20,6 +21,9 @@ import org.nd4j.linalg.dataset.api.preprocessor.NormalizerStandardize;
 import org.nd4j.linalg.io.ClassPathResource;
 import org.nd4j.linalg.learning.config.Nesterovs;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
+
+import java.io.File;
+import java.io.IOException;
 
 public class IrisClassifier {
 
@@ -63,7 +67,7 @@ public class IrisClassifier {
         }
     }
 
-    public static void irisNN (DataSet trainingData, DataSet testingData){
+    public static void irisNN (DataSet trainingData, DataSet testingData) throws IOException {
         MultiLayerConfiguration configuration = new NeuralNetConfiguration.Builder()
                 .activation(Activation.TANH)
                 .weightInit(WeightInit.XAVIER)
@@ -81,6 +85,21 @@ public class IrisClassifier {
         MultiLayerNetwork model = new MultiLayerNetwork(configuration);
         model.init();
         model.fit(trainingData);
+
+        //saving the model
+        File locationtoSave = new File("model.zip");
+        boolean saveUpdater = false;//boolean to save updaters not needed as we are not going to train this model further
+
+        //ModelSerializer( modelname, saveUpdater, Location)
+        ModelSerializer.writeModel(model, locationtoSave, saveUpdater);
+
+        /*
+        //loading a saved model
+        // uncomment and specify location of pretrained model
+
+        MultiLayerNetwork model = ModelSerializer.restoreMultiLayerNetwork(locationtoSave);
+
+        */
 
         //testing the model
 
