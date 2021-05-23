@@ -3,7 +3,6 @@ import org.datavec.api.records.reader.RecordReader;
 import org.datavec.api.records.reader.impl.csv.CSVRecordReader;
 import org.datavec.api.split.FileSplit;
 import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator;
-import org.deeplearning4j.eval.Evaluation;
 import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
 import org.deeplearning4j.nn.conf.layers.DenseLayer;
@@ -18,6 +17,7 @@ import org.nd4j.linalg.dataset.SplitTestAndTrain;
 import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
 import org.nd4j.linalg.dataset.api.preprocessor.DataNormalization;
 import org.nd4j.linalg.dataset.api.preprocessor.NormalizerStandardize;
+import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.io.ClassPathResource;
 import org.nd4j.linalg.learning.config.Nesterovs;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
@@ -101,11 +101,33 @@ public class IrisClassifier {
 
         */
 
+        /* **UNCOMMENT TO DISPLAY EVALUATION STATS**
+
         //testing the model
 
         INDArray output = model.output(testingData.getFeatureMatrix());
         Evaluation eval = new Evaluation(3);
         eval.eval(testingData.getLabels(), output);
+        eval.eval(testingData.getLabels(), output);
         System.out.println(eval.stats());
+
+         */
+
+        double sl = 0, sw = 0,pl = 0,pw = 0;
+        INDArray input = Nd4j.create(new double[] {sl,sw,pl,pw});
+
+        // sl, sw, pl, pw variables taken from User
+
+        INDArray result = model.output(input);
+        if (result.getDouble(0) > result.getDouble(1) && result.getDouble(0) > result.getDouble(2)) {
+            System.out.println("Probabilities: Iris-setosa");
+        }else if(result.getDouble(1) > result.getDouble(2)){
+            System.out.println("Probabilities: Iris-versicolor");
+        }else{
+            System.out.println("Probabilities: Iris-virginica");
+        }
+
+        System.out.println("Probabilities: " + result.toString());
+
     }
 }
